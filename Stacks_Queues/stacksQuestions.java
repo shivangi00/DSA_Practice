@@ -182,6 +182,141 @@ public class stacksQuestions{
         }
     }
 
+    // LC: 946
+    public boolean validateStackSequences(int[] pushed, int[] popped) {
+        int idx = 0, n = popped.length;
+        Stack<Integer> st = new Stack<>();
+        
+        for(int ele : pushed){
+            st.push(ele);
+            while(st.size() != 0 && popped[idx] == st.peek()){
+                st.pop();
+                idx++;
+            }
+        }
+        
+        return st.size() == 0;
+    }
+
+    // LC: 20
+    public boolean isValid(String str) {
+        int n = str.length();
+
+        Stack<Character> st = new Stack<>();
+
+        for(int i = 0; i < n; i++){
+            char ch = str.charAt(i);
+
+            if(ch == '(' || ch == '{' || ch == '['){
+                st.push(ch);
+            } else{
+                if(st.size() == 0){
+                    return false;
+                } else if(ch == ')' && st.peek() != '('){
+                    return false;
+                } else if(ch == '}' && st.peek() != '{'){
+                    return false;
+                } else if(ch == ']' && st.peek() != '['){
+                    return false;
+                } else{
+                    st.pop();
+                }
+            }
+        }
+
+        return st.size() == 0;
+    }
+
+    // LC: 1249
+    public String minRemoveToMakeValid(String s) {
+        int n = s.length();
+        Stack<Integer> st = new Stack<>();
+
+        for(int i = 0; i < n; i++){
+            char ch = s.charAt(i);
+            // push '('
+            if(ch == '('){
+                st.push(i);
+            } else if(ch == ')'){
+                // pop if balanced parentheses
+                if (!st.isEmpty() && s.charAt(st.peek()) == '(') st.pop();
+                // push otherwise
+                else st.push(i);
+            }
+        }
+        // now stack contains indices that need to be removed for a valid string
+        // initialise a string builder
+        StringBuilder ans = new StringBuilder();
+        // since using stack, the element at top is the first to be removed from end of string
+        // thus iterating right to left
+        for(int i = n - 1; i >= 0; i--){
+            // pop from stack and ignore the s[i] character as we need to remove it
+            if(!st.isEmpty() && st.peek() == i){
+                st.pop();
+                continue;
+            }
+            ans.append(s.charAt(i));
+        }
+        // since traversal was from right to left... reverse the array and convert into string
+        return (ans.reverse()).toString();
+    }
+
+    // LC: 32
+    public int longestValidParentheses(String s) {
+        Stack<Integer> st = new Stack<>();
+        int len = 0;
+        // to handle runtime error for case '()'
+        st.push(-1);
+        for(int i = 0; i < s.length(); i++){
+            if(st.peek() != -1 && s.charAt(st.peek()) == '(' && s.charAt(i) == ')'){
+                st.pop();
+                len = Math.max(len, i - st.peek());
+            } else{
+                st.push(i);   
+            }
+        }
+        return len;
+    }
+
+    // LC: 735
+    public int[] asteroidCollision(int[] asteroids) {
+        /*
+        Scenarios:
+        (+, +) -> no collision
+        (+, -) -> collision
+        (-, +) -> no collision
+        (-, -) -> no collision 
+        */
+
+        Stack<Integer> st = new Stack<>();
+        for(int asteroid : asteroids){
+            // no collision no matter what is on top
+            if(asteroid > 0){
+                st.push(asteroid);
+                continue;
+            }
+            // +ve on top/ incoming -ve
+            // keep popping till st.peek() < -(asteroid)
+            while(!st.isEmpty() && st.peek() > 0 && st.peek() < -asteroid) st.pop();
+            // if peek is equal to incoming: destroy both
+            if(!st.isEmpty() && st.peek() == -asteroid){
+                st.pop();
+            } else if(st.isEmpty() || st.peek() < 0){
+                // if stack becomes empty or top has a -ve value: push incoming
+                st.push(asteroid);
+            } else{
+                // if incoming < peek : destroy it i.e. continue
+            }
+        }
+
+        int[] ans = new int[st.size()];
+        for(int i = ans.length - 1; i >= 0; --i){
+            ans[i] = st.pop();
+        }
+
+        return ans;
+    }
+
     public static void main(String[] args) {
         stacksQuestions nextGreatest = new stacksQuestions();
         System.out.println(nextGreatest);
