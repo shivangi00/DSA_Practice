@@ -184,7 +184,7 @@ public class stacksQuestions{
 
     // LC: 946
     public boolean validateStackSequences(int[] pushed, int[] popped) {
-        int idx = 0, n = popped.length;
+        int idx = 0;
         Stack<Integer> st = new Stack<>();
         
         for(int ele : pushed){
@@ -315,6 +315,92 @@ public class stacksQuestions{
         }
 
         return ans;
+    }
+
+    // LC: 84 Largest Rectangle in Histogram (Approach #1)
+    public int largestRectangleArea(int[] heights) {
+        int n = heights.length;
+        int[] nsol = new int[n];
+        int[] nsor = new int[n];
+
+        NSOL(heights, nsol);
+        NSOR(heights, nsor);
+
+        int maxArea = 0;
+        for(int i = 0; i < n; i++){
+            int h = heights[i];
+            int w = nsor[i] - nsol[i] - 1;
+            maxArea = Math.max(maxArea, h * w);
+        }
+
+        return maxArea;
+    }
+
+    // LC: 84 Largest Rectangle in Histogram (Approach #2)
+    public int largestRectangleArea_02(int[] heights) {
+        int n = heights.length;
+        Stack<Integer> st = new Stack<>();
+        st.push(-1);
+        int maxArea = 0;
+
+        for(int i = 0; i < n; i++){
+            while(st.peek() != -1 && heights[st.peek()] > heights[i]){
+                int h = heights[st.pop()];
+                int w = i - st.peek() - 1;
+                maxArea = Math.max(maxArea, h * w);
+            }
+            st.push(i);
+        }
+
+        while(st.peek() != -1){
+            int h = heights[st.pop()];
+            int w = n - st.peek() - 1;
+            maxArea = Math.max(maxArea, h * w);
+        }
+
+        return maxArea;
+    }
+    
+    // LC: 85 Maximal Rectangle
+    public int maximalRectangle(char[][] matrix) {
+        int n = matrix.length;
+        int m = matrix[0].length;
+        if(n == 0 || m == 0) return 0;
+        
+        int[] heights = new int[m];
+        int maxRec = 0;
+
+        for(int i = 0; i < n; i++){
+            for(int j =0; j < m; j++){
+                char ch = matrix[i][j];
+                heights[j] = ch == '1' ? heights[j] + 1 : 0;
+            }
+            maxRec = Math.max(maxRec, largestRectangleArea(heights));
+        }
+        return maxRec;
+    }
+
+    // LC: 221 Maximal Square (exactly same as Maximal Rectangle with one line change)
+    public int largestSquareArea(int[] heights) {
+        int n = heights.length;
+        int[] nsol = new int[n];
+        int[] nsor = new int[n];
+        
+        NSOL(heights, nsol);
+        NSOR(heights, nsor);
+        
+        int maxArea = 0;
+        for(int i = 0; i < n; i++){
+            int h = heights[i];
+            int w = nsor[i] - nsol[i] - 1;
+            // square of the min of h, w will always form a sq
+            maxArea = Math.max(maxArea, (h < w) ? h * h : w * w);
+        } 
+        return maxArea;
+    }
+
+    public int maximalSquare(char[][] matrix) {
+        return maximalRectangle(matrix);
     }
 
     public static void main(String[] args) {
