@@ -2,6 +2,7 @@ package Leetcode_Daily_Challenge;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class lc_daily_challenge {
     // 01-09-2023 : Bit Manipulation
@@ -193,4 +194,30 @@ public class lc_daily_challenge {
         }
         return (int) count;
     }
+
+    // 11-09-2023 : Hashmap
+
+    public List<List<Integer>> groupThePeople(int[] groupSizes) {
+        int n = groupSizes.length;
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        List<List<Integer>> result = new ArrayList<>();
+
+        for(int i = 0; i < n; i++){
+            // add value in arraylist of map corresponding to key groupSize[i]
+            if(!map.containsKey(groupSizes[i])){
+                map.put(groupSizes[i], new ArrayList<>());
+            }
+            // add the index i to the list map[groupSizes[i]] i.e. add it to the list of values corresponding to key groupSizes[i] in map 
+            List<Integer> group = map.get(groupSizes[i]);
+            group.add(i);
+            // if length of list of values (or people) corresponding to key (or group size) equals the key : add the list of values to the result and remove it from the map
+            if(group.size() == groupSizes[i]){
+                result.add(group);
+                map.remove(groupSizes[i]);
+            }
+        }
+
+        return result;
+    }
+
 }
