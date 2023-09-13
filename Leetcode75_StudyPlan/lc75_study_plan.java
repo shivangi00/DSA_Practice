@@ -1,4 +1,4 @@
-package LC75_StudyPlan;
+package Leetcode75_StudyPlan;
 
 public class lc75_study_plan {
     // LC 605 : Can place flowers
