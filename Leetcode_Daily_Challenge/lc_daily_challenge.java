@@ -1,6 +1,8 @@
 package Leetcode_Daily_Challenge;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +25,7 @@ public class lc_daily_challenge {
         return ans;
     }
 
-    // 05-09-2023 : Linked List
+    // 05-09-2023 : LC 138
     // Definition for a Node
     class Node {
         int val;
@@ -57,7 +59,7 @@ public class lc_daily_challenge {
         return visited.get(head);
     }
 
-    // 07-09-2023 : Linked List
+    // 07-09-2023 : LC 725
     //Definition for singly-linked list.
     public class ListNode {
         int val;
@@ -93,7 +95,7 @@ public class lc_daily_challenge {
         return ans;
     }
 
-    // 07-09-2023 : Linked List
+    // 07-09-2023 : LC 92
     ListNode h = null, t = null;
 
     void addFirst(ListNode node){
@@ -142,7 +144,7 @@ public class lc_daily_challenge {
         return head;
     }
 
-    // 08-09-2023 : Dynamic Programming
+    // 08-09-2023 : LC 118
     public List<List<Integer>> generate(int numRows) {
         List<List<Integer>> triangle = new ArrayList<List<Integer>>();
         // add first row to the triangle
@@ -164,7 +166,7 @@ public class lc_daily_challenge {
         return triangle;
     }
 
-    // 09-09-2023 : Dynamic Programming
+    // 09-09-2023 : LC 377
     public int combinationSum4(int[] nums, int target) {
         int[] dp = new int[target + 1];
         // base case: there exists at least one combinationv
@@ -181,7 +183,7 @@ public class lc_daily_challenge {
         return dp[target];
     }
 
-    // 10-09-2023 : Dynamic Programming | Combinators
+    // 10-09-2023 : Dynamic Programming | Combinators LC 1359
     private static final int MOD = 1000000007;
     
     public int countOrders(int n) {
@@ -195,7 +197,7 @@ public class lc_daily_challenge {
         return (int) count;
     }
 
-    // 11-09-2023 : Hashmap
+    // 11-09-2023 : Hashmap :C 1282
 
     public List<List<Integer>> groupThePeople(int[] groupSizes) {
         int n = groupSizes.length;
@@ -216,8 +218,53 @@ public class lc_daily_challenge {
                 map.remove(groupSizes[i]);
             }
         }
-
         return result;
+    }
+
+    // 12-09-2023 : LC 1647
+    public int minDeletions(String s) {
+        int delCount = 0;
+        int[] freq = new int[26];
+
+        for(int i = 0; i < s.length(); i++){
+            freq[s.charAt(i) - 'a']++;
+        }
+
+        HashSet<Integer> vis = new HashSet<>();
+        for(int i = 0; i < 26; i++){
+            while(freq[i] > 0 && vis.contains(freq[i])){
+                freq[i]--;
+                delCount++;
+            }
+            vis.add(freq[i]);
+        }
+        return delCount;
+    }
+
+    // 13-09-2023 LC 135
+    public int candy(int[] ratings) {
+        int n = ratings.length;
+        int[] ans = new int[n];
+        int totalCandies = 0;
+        // each child to have at least one candy
+        Arrays.fill(ans, 1);
+
+        for(int i = 1; i < n; i++){
+            if(ratings[i] > ratings[i - 1]){
+                ans[i] = ans[i - 1] + 1;
+            }
+        }
+
+        for(int i = n - 2; i >= 0; i--){
+            if(ratings[i] > ratings[i + 1]){
+                ans[i] = Math.max(ans[i], ans[i + 1] + 1);
+            }
+        }
+
+        for(int ele : ans){
+            totalCandies += ele;
+        }
+        return totalCandies;
     }
 
 }
