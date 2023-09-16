@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -333,7 +332,7 @@ public class lc_daily_challenge {
         return mstWeight;
     }
 
-    // 16-09-2023 : LC 1631
+    // 16-09-2023 : LC 
     public int minimumEffortPath(int[][] heights) {
         int rows = heights.length, cols = heights[0].length;
         int[][] distance = new int[rows][cols];
