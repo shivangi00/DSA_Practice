@@ -3,8 +3,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 public class lc_daily_challenge {
     // 01-09-2023 : Bit Manipulation
@@ -267,4 +269,107 @@ public class lc_daily_challenge {
         return totalCandies;
     }
 
+    // 14-09-2023 : LC 332
+    HashMap<String, PriorityQueue<String>>graph;
+    LinkedList<String> ans;
+
+    public List<String> findItinerary(List<List<String>> tickets) {
+        graph = new HashMap<>();
+        ans = new LinkedList<>();
+        for(List<String> ticket : tickets){
+            PriorityQueue<String> temp = graph.getOrDefault(ticket.get(0), new PriorityQueue<>());
+            temp.add(ticket.get(1));
+            graph.put(ticket.get(0), temp);
+        }
+
+        dfs("JFK");
+        return ans;
+    }
+
+    public void dfs(String src){
+        PriorityQueue<String> nbrs = graph.get(src);
+        while(nbrs != null && nbrs.size() > 0){
+            String nbr = nbrs.remove();
+            dfs(nbr);
+        }
+
+        ans.addFirst(src);
+        
+    }
+
+    // 15-09-2023 : LC 1584
+    public static int manhattanDist(int[] p1, int[] p2){
+        return Math.abs(p1[0] - p2[0]) + Math.abs(p1[1] - p2[1]);
+    }
+    public int minCostConnectPoints(int[][] points) {
+        int n = points.length;
+        boolean[] visited = new boolean[n];
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(0, 0);
+
+        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a, b) -> Integer.compare(a[0], b[0]));
+        minHeap.add(new int[]{0, 0});
+
+        int mstWeight = 0;
+
+        while(!minHeap.isEmpty()){
+            int[] top = minHeap.poll();
+            int w = top[0], u = top[1];
+
+            if(visited[u] || map.getOrDefault(u, Integer.MAX_VALUE) < w)continue;
+            visited[u] = true;
+            mstWeight += w;
+
+            for(int v = 0; v < n; v++){
+                if(!visited[v]){
+                    int newDist = manhattanDist(points[u], points[v]);
+                    if(newDist < map.getOrDefault(v, Integer.MAX_VALUE)){
+                        map.put(v, newDist);
+                        minHeap.add(new int[]{newDist, v});
+                    }
+                }
+            }
+        }
+        return mstWeight;
+    }
+
+    // 16-09-2023 : LC 1631
+    public int minimumEffortPath(int[][] heights) {
+        int rows = heights.length, cols = heights[0].length;
+        int[][] distance = new int[rows][cols];
+        // pq -> {dist, src, dest}
+        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a, b) -> Integer.compare(a[0], b[0]));
+        minHeap.add(new int[]{0,0,0});
+
+        for(int i = 0; i < rows; i++){
+            for(int j = 0; j < cols; j++){
+                distance[i][j] = Integer.MAX_VALUE;
+            }
+        }
+
+        distance[0][0] = 0;
+
+        int[][] directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+        while(!minHeap.isEmpty()){
+            int[] top = minHeap.poll();
+            int effort = top[0], row = top[1], col = top[2];
+
+            if(effort > distance[row][col]) continue;
+
+            if(row == rows - 1 && col == cols - 1) return effort;
+
+            for(int[] dir : directions){
+                int currRow = row + dir[0], currCol = col + dir[1];
+                if(currRow >= 0 && currRow < rows && currCol >= 0 && currCol < cols){
+                    int currEffort = Math.max(effort, Math.abs(heights[row][col] - heights[currRow][currCol]));
+                    if(currEffort < distance[currRow][currCol]){
+                        distance[currRow][currCol] = currEffort;
+                        minHeap.add(new int[]{currEffort, currRow, currCol});
+                    }
+                }
+            }
+        }
+        return -1;
+    }
 }
